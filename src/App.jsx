@@ -278,19 +278,23 @@ function App() {
         {/* ── Step 1: Assets ── */}
         {step === 1 && (
           <div className="step-content">
-            <InputGroup isRTL={isRTL} icon={Wallet}           label={t.cashInBank}      fieldName="cashInBank"   value={assets.cashInBank}   onChange={handleAssetChange('cashInBank')} />
-            <InputGroup isRTL={isRTL} icon={HandCoins}        label={t.cashInHand}      fieldName="cashInHand"   value={assets.cashInHand}   onChange={handleAssetChange('cashInHand')} />
-            <InputGroup isRTL={isRTL} icon={CircleDollarSign} label={t.goldGrams}       fieldName="gold"         value={assets.gold}         onChange={handleAssetChange('gold')} />
-            <InputGroup isRTL={isRTL} icon={Coins}            label={t.silverGrams}     fieldName="silver"       value={assets.silver}       onChange={handleAssetChange('silver')} />
-            <InputGroup isRTL={isRTL} icon={TrendingUp}       label={t.investments}     fieldName="investments"  value={assets.investments}  onChange={handleAssetChange('investments')} />
+            <div className="form-grid">
+              <InputGroup isRTL={isRTL} icon={Wallet}           label={t.cashInBank}      fieldName="cashInBank"   value={assets.cashInBank}   onChange={handleAssetChange('cashInBank')} />
+              <InputGroup isRTL={isRTL} icon={HandCoins}        label={t.cashInHand}      fieldName="cashInHand"   value={assets.cashInHand}   onChange={handleAssetChange('cashInHand')} />
+              <InputGroup isRTL={isRTL} icon={CircleDollarSign} label={t.goldGrams}       fieldName="gold"         value={assets.gold}         onChange={handleAssetChange('gold')} />
+              <InputGroup isRTL={isRTL} icon={Coins}            label={t.silverGrams}     fieldName="silver"       value={assets.silver}       onChange={handleAssetChange('silver')} />
+              <InputGroup isRTL={isRTL} icon={TrendingUp}       label={t.investments}     fieldName="investments"  value={assets.investments}  onChange={handleAssetChange('investments')} />
+            </div>
           </div>
         )}
 
         {/* ── Step 2: Liabilities ── */}
         {step === 2 && (
           <div className="step-content">
-            <InputGroup isRTL={isRTL} icon={CreditCard} label={t.outstandingLoans} fieldName="loans"       value={liabilities.loans}       onChange={handleLiabilityChange('loans')} />
-            <InputGroup isRTL={isRTL} icon={Receipt}    label={t.pendingDues}       fieldName="pendingDues" value={liabilities.pendingDues} onChange={handleLiabilityChange('pendingDues')} />
+            <div className="form-grid">
+              <InputGroup isRTL={isRTL} icon={CreditCard} label={t.outstandingLoans} fieldName="loans"       value={liabilities.loans}       onChange={handleLiabilityChange('loans')} />
+              <InputGroup isRTL={isRTL} icon={Receipt}    label={t.pendingDues}       fieldName="pendingDues" value={liabilities.pendingDues} onChange={handleLiabilityChange('pendingDues')} />
+            </div>
           </div>
         )}
 
@@ -308,11 +312,9 @@ function App() {
               </div>
             )}
 
-            <div style={{ display: 'flex', gap: '24px', flexDirection: 'column' }}>
-              <div>
-                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>
-                  {t.assets}
-                </h4>
+            <div className="summary-grid">
+              <div className="summary-section">
+                <h4 className="summary-section-title">{t.assets}</h4>
                 <ul className="summary-list">
                   <li className="summary-item"><span>{t.cashInBankShort}</span> <span>{formatINR(assets.cashInBank || 0)}</span></li>
                   <li className="summary-item"><span>{t.cashInHandShort}</span> <span>{formatINR(assets.cashInHand || 0)}</span></li>
@@ -322,22 +324,20 @@ function App() {
                 </ul>
               </div>
 
-              <div>
-                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>
-                  {t.liabilities}
-                </h4>
+              <div className="summary-section">
+                <h4 className="summary-section-title">{t.liabilities}</h4>
                 <ul className="summary-list">
                   <li className="summary-item"><span>{t.loans}</span> <span>{formatINR(liabilities.loans || 0)}</span></li>
                   <li className="summary-item"><span>{t.pendingDuesShort}</span> <span>{formatINR(liabilities.pendingDues || 0)}</span></li>
                 </ul>
               </div>
-
-              {error && (
-                <div style={{ padding: '12px', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)', borderRadius: '8px', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                  <AlertCircle size={18} /> {error}
-                </div>
-              )}
             </div>
+
+            {error && (
+              <div className="error-banner">
+                <AlertCircle size={18} /> {error}
+              </div>
+            )}
           </div>
         )}
 
