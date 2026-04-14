@@ -35,7 +35,29 @@
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Inter', 'Noto Nastaliq Urdu', system-ui, -apple-system, sans-serif;
+}
+
+/* Urdu RTL text alignment */
+[dir="rtl"] .form-group label,
+[dir="rtl"] .step-label,
+[dir="rtl"] .smart-message,
+[dir="rtl"] .breakdown-title,
+[dir="rtl"] .result-card p {
+  text-align: right;
+}
+
+[dir="rtl"] .smart-message {
+  border-left: none;
+  border-right: 4px solid var(--primary);
+}
+
+[dir="rtl"] .smart-message.ineligible {
+  border-right-color: var(--error);
+}
+
+[dir="rtl"] .smart-message.warning {
+  border-right-color: #f59e0b;
 }
 
 body {
@@ -50,10 +72,42 @@ body {
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.theme-toggle-btn {
+/* Top controls bar (language + theme toggles) */
+.top-controls {
   position: absolute;
-  top: 24px;
-  right: 24px;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 10;
+}
+
+[dir="rtl"] .top-controls {
+  right: auto;
+  left: 16px;
+}
+
+.lang-toggle-btn {
+  background: rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 20px;
+  padding: 4px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  color: white;
+  transition: all 0.2s ease;
+  letter-spacing: 0.03em;
+  font-family: 'Inter', 'Noto Nastaliq Urdu', system-ui, sans-serif;
+}
+
+.lang-toggle-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: scale(1.03);
+}
+
+.theme-toggle-btn {
   background: rgba(255, 255, 255, 0.2);
   border: none;
   border-radius: 50%;
@@ -65,7 +119,6 @@ body {
   cursor: pointer;
   color: white;
   transition: all 0.2s ease;
-  z-index: 10;
 }
 
 .theme-toggle-btn:hover {
@@ -238,6 +291,13 @@ body {
   left: 14px;
   color: var(--text-muted);
   transition: color 0.3s;
+  pointer-events: none;
+}
+
+/* RTL: icon on the right side */
+.rtl-input .input-icon {
+  left: auto;
+  right: 14px;
 }
 
 .input-field {
@@ -249,6 +309,20 @@ body {
   color: var(--text-main);
   font-size: 1rem;
   transition: all 0.2s ease;
+  /* Remove number spinners for cleaner look */
+  -moz-appearance: textfield;
+}
+
+.input-field::-webkit-outer-spin-button,
+.input-field::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* RTL: padding flips */
+.rtl-input .input-field {
+  padding: 14px 40px 14px 14px;
+  text-align: right;
 }
 
 .input-field:focus {
@@ -256,10 +330,6 @@ body {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1);
   background: var(--card-bg);
-}
-
-.input-field:focus + .input-icon {
-  color: var(--primary);
 }
 
 .actions {

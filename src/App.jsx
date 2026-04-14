@@ -7,16 +7,150 @@ import {
 import { calculateZakatAPI } from './api';
 import './index.css';
 
-// Constants used to show local breakdown (matching backend assumptions)
-const GOLD_PRICE = 6000;
-const SILVER_PRICE = 70;
+// ── Constants ────────────────────────────────────────────────────────────────
+const GOLD_PRICE = 6000;   // ₹ per gram
+const SILVER_PRICE = 70;   // ₹ per gram
 
+// ── Translations ─────────────────────────────────────────────────────────────
+const translations = {
+  en: {
+    appTitle: 'Smart Zakat Calculator',
+    appSubtitle: 'Calculate your Zakat accurately and effortlessly',
+    steps: ['Assets', 'Liabilities', 'Summary', 'Result'],
+    cashInBank: 'Cash in Bank (₹)',
+    cashInHand: 'Cash in Hand (₹)',
+    goldGrams: 'Gold (grams)',
+    silverGrams: 'Silver (grams)',
+    investments: 'Investments & Stocks (₹)',
+    outstandingLoans: 'Outstanding Loans (₹)',
+    pendingDues: 'Pending Dues / Bills (₹)',
+    yourSummary: 'Your Summary',
+    assets: 'Assets',
+    liabilities: 'Liabilities',
+    cashInBankShort: 'Cash in Bank',
+    cashInHandShort: 'Cash in Hand',
+    gold: 'Gold',
+    silver: 'Silver',
+    investmentsShort: 'Investments',
+    loans: 'Loans',
+    pendingDuesShort: 'Pending Dues',
+    grams: 'grams',
+    nisabReached: 'Nisab Reached',
+    belowNisab: 'Below Nisab Threshold',
+    totalZakatDue: 'Total Zakat Due',
+    eligibleMsg: 'You are eligible for Zakat.',
+    eligibleDetail: 'Your net wealth exceeds the Nisab minimum. It is highly recommended to distribute your required Zakat of',
+    eligibleDetail2: 'as soon as possible to those in need.',
+    notEligibleMsg: 'Zakat is NOT obligatory for you.',
+    notEligibleDetail: 'Your calculated net wealth',
+    notEligibleDetail2: 'currently falls below the Nisab threshold of',
+    zakatBreakdown: 'Zakat Component Breakdown',
+    cashAssets: 'Cash Assets',
+    goldValue: 'Gold Value',
+    silverValue: 'Silver Value',
+    liabilitiesDeduction: 'Liabilities Deduction',
+    finalOverview: 'Final Accounting Overview',
+    totalGrossAssets: 'Total Gross Assets',
+    totalLiabilities: 'Total Liabilities',
+    netWealth: 'Net Wealth Evaluated',
+    back: 'Back',
+    next: 'Next',
+    calculateZakat: 'Calculate Zakat',
+    calculating: 'Calculating...',
+    recalculate: 'Recalculate Now',
+    warningTitle: 'Warning:',
+    warningMsg: "You haven't entered any assets yet. Double check that you aren't missing anything before calculating.",
+    placeholder: '₹0',
+  },
+  ur: {
+    appTitle: 'سمارٹ زکوٰۃ کیلکولیٹر',
+    appSubtitle: 'درست اور آسانی سے اپنی زکوٰۃ حساب کریں',
+    steps: ['اثاثے', 'ذمہ داریاں', 'خلاصہ', 'نتیجہ'],
+    cashInBank: 'بینک میں رقم (₹)',
+    cashInHand: 'ہاتھ میں نقد (₹)',
+    goldGrams: 'سونا (گرام)',
+    silverGrams: 'چاندی (گرام)',
+    investments: 'سرمایہ کاری و حصص (₹)',
+    outstandingLoans: 'بقایا قرضے (₹)',
+    pendingDues: 'واجب الادا بِل (₹)',
+    yourSummary: 'آپ کا خلاصہ',
+    assets: 'اثاثے',
+    liabilities: 'ذمہ داریاں',
+    cashInBankShort: 'بینک میں رقم',
+    cashInHandShort: 'ہاتھ میں نقد',
+    gold: 'سونا',
+    silver: 'چاندی',
+    investmentsShort: 'سرمایہ کاری',
+    loans: 'قرضے',
+    pendingDuesShort: 'واجب الادا',
+    grams: 'گرام',
+    nisabReached: 'نصاب پورا ہوا',
+    belowNisab: 'نصاب سے کم',
+    totalZakatDue: 'کل زکوٰۃ واجب',
+    eligibleMsg: 'آپ زکوٰۃ کے اہل ہیں۔',
+    eligibleDetail: 'آپ کی خالص دولت نصاب کی حد سے زیادہ ہے۔ آپ کی زکوٰۃ',
+    eligibleDetail2: 'جلد از جلد ضرورت مندوں میں تقسیم کریں۔',
+    notEligibleMsg: 'آپ پر زکوٰۃ واجب نہیں ہے۔',
+    notEligibleDetail: 'آپ کی خالص دولت',
+    notEligibleDetail2: 'نصاب کی حد سے کم ہے جو کہ',
+    zakatBreakdown: 'زکوٰۃ اجزاء کی تفصیل',
+    cashAssets: 'نقد اثاثے',
+    goldValue: 'سونے کی قیمت',
+    silverValue: 'چاندی کی قیمت',
+    liabilitiesDeduction: 'ذمہ داریوں کی کٹوتی',
+    finalOverview: 'حتمی حسابی جائزہ',
+    totalGrossAssets: 'کل مجموعی اثاثے',
+    totalLiabilities: 'کل ذمہ داریاں',
+    netWealth: 'خالص دولت',
+    back: 'واپس',
+    next: 'آگے',
+    calculateZakat: 'زکوٰۃ حساب کریں',
+    calculating: 'حساب ہو رہا ہے...',
+    recalculate: 'دوبارہ حساب کریں',
+    warningTitle: 'تنبیہ:',
+    warningMsg: 'آپ نے ابھی تک کوئی اثاثہ درج نہیں کیا۔ حساب کرنے سے پہلے دوبارہ جانچ لیں۔',
+    placeholder: '₹0',
+  }
+};
+
+// ── Indian number formatter ───────────────────────────────────────────────────
+const formatINR = (value) => {
+  const num = Number(value);
+  if (isNaN(num)) return '₹0.00';
+  return '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};
+
+// ── InputGroup (outside App to prevent re-mount on every render) ───────────
+const InputGroup = ({ label, fieldName, value, onChange, icon: Icon, isRTL }) => (
+  <div className="form-group">
+    <label>{label}</label>
+    <div className={`input-wrapper ${isRTL ? 'rtl-input' : ''}`}>
+      <Icon className="input-icon" size={20} />
+      <input
+        type="number"
+        className="input-field"
+        name={fieldName}
+        value={value}
+        onChange={onChange}
+        placeholder="0"
+        min="0"
+        autoComplete="off"
+      />
+    </div>
+  </div>
+);
+
+// ── App ───────────────────────────────────────────────────────────────────────
 function App() {
   const [step, setStep] = useState(1);
+  const [lang, setLang] = useState('en');
   const [theme, setTheme] = useState(
     window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
   );
-  
+
+  const t = translations[lang];
+  const isRTL = lang === 'ur';
+
   const [assets, setAssets] = useState({
     cashInBank: '',
     cashInHand: '',
@@ -24,7 +158,7 @@ function App() {
     silver: '',
     investments: ''
   });
-  
+
   const [liabilities, setLiabilities] = useState({
     loans: '',
     pendingDues: ''
@@ -39,22 +173,27 @@ function App() {
     document.documentElement.setAttribute('data-theme', theme);
   }, [theme]);
 
-  const toggleTheme = () => {
-    setTheme(theme === 'light' ? 'dark' : 'light');
-  };
+  // Apply RTL direction
+  useEffect(() => {
+    document.documentElement.setAttribute('dir', isRTL ? 'rtl' : 'ltr');
+  }, [isRTL]);
 
-  const handleAssetChange = (e) => {
-    const { name, value } = e.target;
-    // Allow empty string or numeric inputs (preventing negative naturally)
+  const toggleTheme = () => setTheme(theme === 'light' ? 'dark' : 'light');
+  const toggleLang = () => setLang(lang === 'en' ? 'ur' : 'en');
+
+  // ── Input handlers (fixed: proper controlled inputs, no re-mount) ──────────
+  const handleAssetChange = (field) => (e) => {
+    const value = e.target.value;
+    // Allow empty string or valid non-negative numbers
     if (value === '' || (/^\d*\.?\d*$/.test(value) && Number(value) >= 0)) {
-      setAssets(prev => ({ ...prev, [name]: value }));
+      setAssets(prev => ({ ...prev, [field]: value }));
     }
   };
 
-  const handleLiabilityChange = (e) => {
-    const { name, value } = e.target;
+  const handleLiabilityChange = (field) => (e) => {
+    const value = e.target.value;
     if (value === '' || (/^\d*\.?\d*$/.test(value) && Number(value) >= 0)) {
-      setLiabilities(prev => ({ ...prev, [name]: value }));
+      setLiabilities(prev => ({ ...prev, [field]: value }));
     }
   };
 
@@ -69,7 +208,6 @@ function App() {
   const handleCalculate = async () => {
     setLoading(true);
     setError(null);
-
     try {
       const data = await calculateZakatAPI(assets, liabilities);
       setResult(data);
@@ -81,14 +219,12 @@ function App() {
     }
   };
 
-  // Validation Checkers
+  // ── Helpers ───────────────────────────────────────────────────────────────
   const isAssetsEmpty = Object.values(assets).every(v => v === '' || Number(v) === 0);
 
-  // Utility to determine categorized gross zakat values for UI Breakdown
   const getBreakdown = () => {
     const goldValue = Number(assets.gold || 0) * GOLD_PRICE;
     const silverValue = Number(assets.silver || 0) * SILVER_PRICE;
-    
     return {
       cash: (Number(assets.cashInBank || 0) + Number(assets.cashInHand || 0)) * 0.025,
       gold: goldValue * 0.025,
@@ -97,50 +233,39 @@ function App() {
     };
   };
 
-  // UI Components
-  const InputGroup = ({ label, name, value, onChange, icon: Icon, placeholder = '0.00' }) => (
-    <div className="form-group">
-      <label>{label}</label>
-      <div className="input-wrapper">
-        <Icon className="input-icon" size={20} />
-        <input
-          type="text"
-          className="input-field"
-          name={name}
-          value={value}
-          onChange={onChange}
-          placeholder={placeholder}
-          autoComplete="off"
-        />
-      </div>
-    </div>
-  );
-
-  const steps = [
-    { num: 1, label: 'Assets' },
-    { num: 2, label: 'Liabilities' },
-    { num: 3, label: 'Summary' },
-    { num: 4, label: 'Result' }
-  ];
+  const steps = t.steps.map((label, i) => ({ num: i + 1, label }));
 
   return (
     <div className="app-container">
-      <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle theme">
-        {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
-      </button>
+      {/* ── Top control bar ── */}
+      <div className="top-controls">
+        <button
+          onClick={toggleLang}
+          className="lang-toggle-btn"
+          aria-label="Toggle language"
+        >
+          {lang === 'en' ? 'اردو' : 'EN'}
+        </button>
+        <button onClick={toggleTheme} className="theme-toggle-btn" aria-label="Toggle theme">
+          {theme === 'light' ? <Moon size={18} /> : <Sun size={18} />}
+        </button>
+      </div>
 
       <div className="header">
-        <h1>Smart Zakat Calculator</h1>
-        <p>Calculate your Zakat accurately and effortlessly</p>
+        <h1>{t.appTitle}</h1>
+        <p>{t.appSubtitle}</p>
       </div>
 
       <div className="progress-container">
-        <div className="progress-bar" style={{ width: `${((step - 1) / 3) * 100}%` }}></div>
+        <div className="progress-bar" style={{ width: `${((step - 1) / 3) * 100}%` }} />
       </div>
 
       <div className="stepper">
         {steps.map((s) => (
-          <div key={s.num} className={`step-item ${step === s.num ? 'active' : ''} ${step > s.num ? 'completed' : ''}`}>
+          <div
+            key={s.num}
+            className={`step-item ${step === s.num ? 'active' : ''} ${step > s.num ? 'completed' : ''}`}
+          >
             <div className="step-circle">
               {step > s.num ? <CheckCircle2 size={16} /> : s.num}
             </div>
@@ -150,53 +275,60 @@ function App() {
       </div>
 
       <div className="content-area">
+        {/* ── Step 1: Assets ── */}
         {step === 1 && (
           <div className="step-content">
-            <InputGroup icon={Wallet} label="Cash in Bank" name="cashInBank" value={assets.cashInBank} onChange={handleAssetChange} />
-            <InputGroup icon={HandCoins} label="Cash in Hand" name="cashInHand" value={assets.cashInHand} onChange={handleAssetChange} />
-            <InputGroup icon={CircleDollarSign} label="Gold (grams)" name="gold" value={assets.gold} onChange={handleAssetChange} />
-            <InputGroup icon={Coins} label="Silver (grams)" name="silver" value={assets.silver} onChange={handleAssetChange} />
-            <InputGroup icon={TrendingUp} label="Investments & Stocks" name="investments" value={assets.investments} onChange={handleAssetChange} />
+            <InputGroup isRTL={isRTL} icon={Wallet}           label={t.cashInBank}      fieldName="cashInBank"   value={assets.cashInBank}   onChange={handleAssetChange('cashInBank')} />
+            <InputGroup isRTL={isRTL} icon={HandCoins}        label={t.cashInHand}      fieldName="cashInHand"   value={assets.cashInHand}   onChange={handleAssetChange('cashInHand')} />
+            <InputGroup isRTL={isRTL} icon={CircleDollarSign} label={t.goldGrams}       fieldName="gold"         value={assets.gold}         onChange={handleAssetChange('gold')} />
+            <InputGroup isRTL={isRTL} icon={Coins}            label={t.silverGrams}     fieldName="silver"       value={assets.silver}       onChange={handleAssetChange('silver')} />
+            <InputGroup isRTL={isRTL} icon={TrendingUp}       label={t.investments}     fieldName="investments"  value={assets.investments}  onChange={handleAssetChange('investments')} />
           </div>
         )}
 
+        {/* ── Step 2: Liabilities ── */}
         {step === 2 && (
           <div className="step-content">
-            <InputGroup icon={CreditCard} label="Outstanding Loans" name="loans" value={liabilities.loans} onChange={handleLiabilityChange} />
-            <InputGroup icon={Receipt} label="Pending Dues / Bills" name="pendingDues" value={liabilities.pendingDues} onChange={handleLiabilityChange} />
+            <InputGroup isRTL={isRTL} icon={CreditCard} label={t.outstandingLoans} fieldName="loans"       value={liabilities.loans}       onChange={handleLiabilityChange('loans')} />
+            <InputGroup isRTL={isRTL} icon={Receipt}    label={t.pendingDues}       fieldName="pendingDues" value={liabilities.pendingDues} onChange={handleLiabilityChange('pendingDues')} />
           </div>
         )}
 
+        {/* ── Step 3: Summary ── */}
         {step === 3 && (
           <div className="step-content">
-            <h3 style={{ marginBottom: '16px', color: 'var(--text-main)' }}>Your Summary</h3>
+            <h3 style={{ marginBottom: '16px', color: 'var(--text-main)' }}>{t.yourSummary}</h3>
 
             {isAssetsEmpty && (
               <div className="smart-message warning" style={{ marginBottom: '24px' }}>
                 <AlertCircle size={20} color="#f59e0b" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong>Warning:</strong> You haven't entered any assets yet. Double check that you aren't missing anything before calculating.
+                  <strong>{t.warningTitle}</strong> {t.warningMsg}
                 </div>
               </div>
             )}
 
             <div style={{ display: 'flex', gap: '24px', flexDirection: 'column' }}>
               <div>
-                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>Assets</h4>
+                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>
+                  {t.assets}
+                </h4>
                 <ul className="summary-list">
-                  <li className="summary-item"><span>Cash in Bank</span> <span>${parseFloat(assets.cashInBank || 0).toFixed(2)}</span></li>
-                  <li className="summary-item"><span>Cash in Hand</span> <span>${parseFloat(assets.cashInHand || 0).toFixed(2)}</span></li>
-                  <li className="summary-item"><span>Gold</span> <span>{parseFloat(assets.gold || 0).toFixed(2)} grams</span></li>
-                  <li className="summary-item"><span>Silver</span> <span>{parseFloat(assets.silver || 0).toFixed(2)} grams</span></li>
-                  <li className="summary-item"><span>Investments</span> <span>${parseFloat(assets.investments || 0).toFixed(2)}</span></li>
+                  <li className="summary-item"><span>{t.cashInBankShort}</span> <span>{formatINR(assets.cashInBank || 0)}</span></li>
+                  <li className="summary-item"><span>{t.cashInHandShort}</span> <span>{formatINR(assets.cashInHand || 0)}</span></li>
+                  <li className="summary-item"><span>{t.gold}</span> <span>{parseFloat(assets.gold || 0).toFixed(2)} {t.grams}</span></li>
+                  <li className="summary-item"><span>{t.silver}</span> <span>{parseFloat(assets.silver || 0).toFixed(2)} {t.grams}</span></li>
+                  <li className="summary-item"><span>{t.investmentsShort}</span> <span>{formatINR(assets.investments || 0)}</span></li>
                 </ul>
               </div>
-              
+
               <div>
-                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>Liabilities</h4>
+                <h4 style={{ color: 'var(--text-muted)', marginBottom: '8px', fontSize: '0.85rem', textTransform: 'uppercase' }}>
+                  {t.liabilities}
+                </h4>
                 <ul className="summary-list">
-                  <li className="summary-item"><span>Loans</span> <span>${parseFloat(liabilities.loans || 0).toFixed(2)}</span></li>
-                  <li className="summary-item"><span>Pending Dues</span> <span>${parseFloat(liabilities.pendingDues || 0).toFixed(2)}</span></li>
+                  <li className="summary-item"><span>{t.loans}</span> <span>{formatINR(liabilities.loans || 0)}</span></li>
+                  <li className="summary-item"><span>{t.pendingDuesShort}</span> <span>{formatINR(liabilities.pendingDues || 0)}</span></li>
                 </ul>
               </div>
 
@@ -209,120 +341,122 @@ function App() {
           </div>
         )}
 
+        {/* ── Step 4: Result ── */}
         {step === 4 && result && (
           <div className="result-card">
             <div className={`result-status ${result.eligible ? 'status-eligible' : 'status-ineligible'}`}>
               {result.eligible ? (
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <CheckCircle2 size={16} /> Nisab Reached
+                  <CheckCircle2 size={16} /> {t.nisabReached}
                 </span>
               ) : (
                 <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <AlertCircle size={16} /> Below Nisab Threshold
+                  <AlertCircle size={16} /> {t.belowNisab}
                 </span>
               )}
             </div>
 
-            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>Total Zakat Due</p>
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.95rem' }}>{t.totalZakatDue}</p>
             <div className="result-amount">
-              ${Number(result.zakat).toFixed(2)}
+              {formatINR(result.zakat)}
             </div>
 
-            {/* Smart Messages Box */}
             {result.eligible ? (
-              <div className="smart-message" style={{ textAlign: 'left', marginBottom: '24px' }}>
+              <div className="smart-message" style={{ textAlign: isRTL ? 'right' : 'left', marginBottom: '24px' }}>
                 <Info size={24} color="var(--primary)" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong>You are eligible for Zakat.</strong>
+                  <strong>{t.eligibleMsg}</strong>
                   <div style={{ marginTop: '4px', opacity: 0.9 }}>
-                    Your net wealth exceeds the Nisab minimum. It is highly recommended to distribute your required Zakat of <strong>${Number(result.zakat).toFixed(2)}</strong> as soon as possible to those in need.
+                    {t.eligibleDetail} <strong>{formatINR(result.zakat)}</strong> {t.eligibleDetail2}
                   </div>
                 </div>
               </div>
             ) : (
-              <div className="smart-message ineligible" style={{ textAlign: 'left', marginBottom: '24px' }}>
+              <div className="smart-message ineligible" style={{ textAlign: isRTL ? 'right' : 'left', marginBottom: '24px' }}>
                 <Info size={24} color="var(--error)" style={{ flexShrink: 0 }} />
                 <div>
-                  <strong>Zakat is NOT obligatory for you.</strong>
+                  <strong>{t.notEligibleMsg}</strong>
                   <div style={{ marginTop: '4px', opacity: 0.9 }}>
-                    Your calculated net wealth (${Number(result.netWealth).toFixed(2)}) currently falls below the Nisab threshold of ${Number(result.nisab).toFixed(2)}.
+                    {t.notEligibleDetail} ({formatINR(result.netWealth)}) {t.notEligibleDetail2} {formatINR(result.nisab)}.
                   </div>
                 </div>
               </div>
             )}
 
             <div className="result-details">
-              {/* Detailed Breakdown */}
               {result.eligible && Number(result.zakat) > 0 && (
                 <>
-                  <div className="breakdown-title">Zakat Component Breakdown</div>
+                  <div className="breakdown-title">{t.zakatBreakdown}</div>
                   <ul className="summary-list" style={{ marginBottom: '16px' }}>
                     <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
-                      <span>Cash Assets</span> <span>${getBreakdown().cash.toFixed(2)}</span>
+                      <span>{t.cashAssets}</span> <span>{formatINR(getBreakdown().cash)}</span>
                     </li>
                     <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
-                      <span>Gold Value</span> <span>${getBreakdown().gold.toFixed(2)}</span>
+                      <span>{t.goldValue}</span> <span>{formatINR(getBreakdown().gold)}</span>
                     </li>
                     <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
-                      <span>Silver Value</span> <span>${getBreakdown().silver.toFixed(2)}</span>
+                      <span>{t.silverValue}</span> <span>{formatINR(getBreakdown().silver)}</span>
                     </li>
                     <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem' }}>
-                      <span>Investments</span> <span>${getBreakdown().investments.toFixed(2)}</span>
+                      <span>{t.investmentsShort}</span> <span>{formatINR(getBreakdown().investments)}</span>
                     </li>
                     {Number(result.totalLiabilities) > 0 && (
                       <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem', color: 'var(--error)' }}>
-                        <span>Liabilities Deduction</span> 
-                        <span>-${(Number(result.totalLiabilities) * 0.025).toFixed(2)}</span>
+                        <span>{t.liabilitiesDeduction}</span>
+                        <span>-{formatINR(Number(result.totalLiabilities) * 0.025)}</span>
                       </li>
                     )}
                   </ul>
                 </>
               )}
 
-              <div className="breakdown-title">Final Accounting Overview</div>
+              <div className="breakdown-title">{t.finalOverview}</div>
               <ul className="summary-list">
                 <li className="summary-item" style={{ padding: '12px 0' }}>
-                  <span>Total Gross Assets</span> 
-                  <span>${Number(result.totalAssets).toFixed(2)}</span>
+                  <span>{t.totalGrossAssets}</span>
+                  <span>{formatINR(result.totalAssets)}</span>
                 </li>
                 <li className="summary-item" style={{ padding: '12px 0' }}>
-                  <span>Total Liabilities</span> 
-                  <span style={{ color: 'var(--error)' }}>-${Number(result.totalLiabilities).toFixed(2)}</span>
+                  <span>{t.totalLiabilities}</span>
+                  <span style={{ color: 'var(--error)' }}>-{formatINR(result.totalLiabilities)}</span>
                 </li>
                 <li className="summary-item total" style={{ color: 'var(--text-main)', background: 'var(--bg-color)', border: '1px solid var(--border-color)', marginTop: '8px' }}>
-                  <span>Net Wealth Evaluated</span> 
-                  <span>${Number(result.netWealth).toFixed(2)}</span>
+                  <span>{t.netWealth}</span>
+                  <span>{formatINR(result.netWealth)}</span>
                 </li>
               </ul>
             </div>
           </div>
         )}
 
+        {/* ── Navigation actions ── */}
         <div className="actions">
           {step > 1 && step < 4 && (
             <button className="btn btn-secondary" onClick={() => setStep(step - 1)} disabled={loading}>
-              <ArrowLeft size={18} /> Back
+              {isRTL ? <ArrowRight size={18} /> : <ArrowLeft size={18} />} {t.back}
             </button>
           )}
-          
-          {step === 1 && <div />} {/* Spacer */}
+
+          {step === 1 && <div />}
 
           {step < 3 && (
             <button className="btn btn-primary" onClick={() => setStep(step + 1)}>
-              Next <ArrowRight size={18} />
+              {t.next} {isRTL ? <ArrowLeft size={18} /> : <ArrowRight size={18} />}
             </button>
           )}
 
           {step === 3 && (
             <button className="btn btn-primary" onClick={handleCalculate} disabled={loading}>
-              {loading ? <RefreshCw className="animate-spin" style={{ animation: 'spin 1s linear infinite' }} size={18} /> : <Calculator size={18} />}
-              {loading ? 'Calculating...' : 'Calculate Zakat'}
+              {loading
+                ? <RefreshCw style={{ animation: 'spin 1s linear infinite' }} size={18} />
+                : <Calculator size={18} />}
+              {loading ? t.calculating : t.calculateZakat}
             </button>
           )}
 
           {step === 4 && (
             <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={resetForm}>
-              <RefreshCw size={18} /> Recalculate Now
+              <RefreshCw size={18} /> {t.recalculate}
             </button>
           )}
         </div>
