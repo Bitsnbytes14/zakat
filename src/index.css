@@ -150,7 +150,7 @@ body {
 
 .app-container {
   width: 95%;
-  max-width: 560px;
+  max-width: 420px;
   margin: auto;
   background: var(--card-bg);
   border-radius: 24px;
@@ -160,6 +160,12 @@ body {
   border: 1px solid var(--border-color);
   animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
   transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+@media (min-width: 641px) {
+  .app-container {
+    max-width: 600px;
+  }
 }
 
 @keyframes slideUp {
@@ -317,6 +323,18 @@ body {
   font-weight: 500;
   margin-bottom: 8px;
   color: var(--text-main);
+}
+
+.form-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.summary-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .input-wrapper {
@@ -578,6 +596,7 @@ body {
 
   .app-container {
     width: 100%;
+    max-width: 100%;
     border-radius: 16px;
   }
 
@@ -596,19 +615,24 @@ body {
   .stepper {
     padding: 16px 12px 0;
     gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
   }
 
   .step-circle {
     width: 24px;
     height: 24px;
-    font-size: 0.75rem;
+    font-size: 0.7rem;
   }
 
   .step-label {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
   }
 
-  /* fix connector line position after shrinking circle */
+  .step-item {
+    min-width: 60px;
+  }
+
   .step-item:not(:last-child)::after {
     top: 11px;
   }
@@ -618,20 +642,26 @@ body {
     min-height: unset;
   }
 
+  .form-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
   .form-group {
     margin-bottom: 12px;
   }
 
   .input-field {
     font-size: 0.95rem;
-    padding: 12px 12px 12px 38px;
+    padding: 14px 12px 14px 38px;
+    min-height: 48px;
   }
 
   .rtl-input .input-field {
-    padding: 12px 38px 12px 12px;
+    padding: 14px 38px 14px 12px;
   }
 
-  /* Stack action buttons vertically on mobile */
   .actions {
     flex-direction: column-reverse;
     gap: 10px;
@@ -640,6 +670,8 @@ body {
   .btn {
     width: 100%;
     justify-content: center;
+    min-height: 48px;
+    padding: 14px 20px;
   }
 
   .result-amount {
@@ -650,6 +682,11 @@ body {
     padding: 16px;
   }
 
+  .summary-grid {
+    flex-direction: column;
+    gap: 16px;
+  }
+
   .summary-item {
     font-size: 0.9rem;
     padding: 12px 0;
@@ -658,16 +695,94 @@ body {
   .smart-message {
     font-size: 0.85rem;
     padding: 12px 14px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .smart-message svg {
+    align-self: flex-start;
   }
 }
 
-/* ── Responsive: Tablet+ (>640px) — restore inline actions ───────────────── */
-@media (min-width: 641px) {
+/* ── Responsive: Tablet (641px–1024px) ───────────────────────────────────────── */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .app-container {
+    border-radius: 20px;
+  }
+
+  .header {
+    padding: 28px 24px 22px;
+  }
+
+  .header h1 {
+    font-size: 1.5rem;
+  }
+
+  .content-area {
+    padding: 20px 24px 24px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .form-group:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .input-field {
+    min-height: 48px;
+  }
+
   .actions {
     flex-direction: row;
+    gap: 12px;
   }
 
   .btn {
     width: auto;
+    min-height: 44px;
+    padding: 12px 24px;
+  }
+}
+
+/* ── Responsive: Desktop (>1024px) ──────────────────────────────────────────────── */
+@media (min-width: 1025px) {
+  .app-container {
+    max-width: 600px;
+  }
+
+  .header {
+    padding: 32px 32px 24px;
+  }
+
+  .content-area {
+    padding: 24px 32px 32px;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+
+  .form-group:nth-child(5) {
+    grid-column: span 2;
+  }
+
+  .actions {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .btn {
+    width: auto;
+    min-height: 44px;
+  }
+
+  .btn:hover:not(:disabled) {
+    transform: translateY(-2px);
   }
 }
