@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Wallet, Coins, CircleDollarSign, TrendingUp, HandCoins,
   CreditCard, Receipt, Calculator, ArrowRight, ArrowLeft,
-  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Linkedin
+  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link
 } from 'lucide-react';
 import { calculateZakatAPI } from './api';
 import './index.css';
@@ -246,7 +246,7 @@ function App() {
           className="linkedin-link"
           aria-label="LinkedIn Profile"
         >
-          <Linkedin size={16} />
+          <Link size={16} />
         </a>
         <button
           onClick={toggleLang}
