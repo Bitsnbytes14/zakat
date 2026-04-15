@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Wallet, Coins, CircleDollarSign, TrendingUp, HandCoins,
   CreditCard, Receipt, Calculator, ArrowRight, ArrowLeft,
-  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info
+  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Linkedin
 } from 'lucide-react';
 import { calculateZakatAPI } from './api';
 import './index.css';
@@ -239,6 +239,15 @@ function App() {
     <div className="app-container">
       {/* ── Top control bar ── */}
       <div className="top-controls">
+        <a
+          href="https://www.linkedin.com/in/mohammad-ahmad-a58a90380/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="linkedin-link"
+          aria-label="LinkedIn Profile"
+        >
+          <Linkedin size={16} />
+        </a>
         <button
           onClick={toggleLang}
           className="lang-toggle-btn"
