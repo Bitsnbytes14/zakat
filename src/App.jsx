@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { 
   Wallet, Coins, CircleDollarSign, TrendingUp, HandCoins,
   CreditCard, Receipt, Calculator, ArrowRight, ArrowLeft,
-  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link, Download
+  CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link, Download, Lightbulb
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
 import { calculateZakatAPI } from './api';
@@ -67,6 +67,12 @@ const translations = {
     warningMsg: "You haven't entered any assets yet. Double check that you aren't missing anything before calculating.",
     placeholder: '₹0',
     downloadPdf: 'Download PDF',
+    adviceTitle: 'Smart Insights',
+    adviceBelowNisab: 'You are below Nisab, no Zakat required this year.',
+    adviceHighGold: 'A large portion of your Zakat comes from gold assets.',
+    adviceHighLiabilities: 'Your liabilities significantly reduce your Zakat obligation.',
+    adviceHighInvestments: 'Your investment portfolio contributes substantially to your Zakat.',
+    adviceHighCash: 'Your liquid cash forms a significant part of your Zakat.',
   },
   ur: {
     appTitle: 'سمارٹ زکوٰۃ کیلکولیٹر',
@@ -121,6 +127,12 @@ const translations = {
     warningMsg: 'آپ نے ابھی تک کوئی اثاثہ درج نہیں کیا۔ حساب کرنے سے پہلے دوبارہ جانچ لیں۔',
     placeholder: '₹0',
     downloadPdf: 'PDF ڈاؤنلوڈ کریں',
+    adviceTitle: 'سمیرت مشورے',
+    adviceBelowNisab: 'آپ نصاب سے نیچے ہیں، اس سال زکوٰۃ واجب نہیں۔',
+    adviceHighGold: 'آپ کی زکوٰۃ کا بڑا حصہ سونے کے اثاثوں سے آتا ہے۔',
+    adviceHighLiabilities: 'آپ کے ذمہ داریوں سے آپ کی زکوٰۃ کی رقم کم ہوجاتی ہے۔',
+    adviceHighInvestments: 'آپ کا سرمایہ کاری پورٹ فولیو آپ کی زکوٰۃ میں نمایاں حصہ ڈالتا ہے۔',
+    adviceHighCash: 'آپ کا نقد رقم آپ کی زکوٰۃ کا اہم حصہ ہے۔',
   }
 };
 
@@ -290,6 +302,37 @@ function App() {
     doc.text(`Total Zakat Due: ${formatINR(result.zakat)}`, 25, 185);
     
     doc.save('zakat-report.pdf');
+  };
+
+  const getAdvice = () => {
+    if (!result) return [];
+    const advice = [];
+    
+    if (!result.eligible || result.zakat === 0) {
+      advice.push({ key: 'adviceBelowNisab', message: t.adviceBelowNisab });
+      return advice;
+    }
+    
+    const breakdown = getCategoryBreakdown();
+    const totalZakat = result.zakat || 1;
+    
+    if (breakdown.gold / totalZakat > 0.4) {
+      advice.push({ key: 'adviceHighGold', message: t.adviceHighGold });
+    }
+    
+    if ((Number(liabilities.loans) || 0) + (Number(liabilities.pendingDues) || 0) > result.totalAssets * 0.3) {
+      advice.push({ key: 'adviceHighLiabilities', message: t.adviceHighLiabilities });
+    }
+    
+    if (breakdown.investments / totalZakat > 0.4) {
+      advice.push({ key: 'adviceHighInvestments', message: t.adviceHighInvestments });
+    }
+    
+    if (breakdown.cash / totalZakat > 0.4) {
+      advice.push({ key: 'adviceHighCash', message: t.adviceHighCash });
+    }
+    
+    return advice;
   };
 
   const getBreakdown = () => {
@@ -520,6 +563,18 @@ function App() {
                   <span>{formatINR(result.netWealth)}</span>
                 </li>
               </ul>
+
+              {getAdvice().length > 0 && (
+                <div className="advice-box">
+                  <div className="breakdown-title">{t.adviceTitle}</div>
+                  {getAdvice().map((item) => (
+                    <div key={item.key} className="advice-item">
+                      <Lightbulb size={16} />
+                      <span>{item.message}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}
