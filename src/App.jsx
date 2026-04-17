@@ -53,6 +53,10 @@ const translations = {
     totalGrossAssets: 'Total Gross Assets',
     totalLiabilities: 'Total Liabilities',
     netWealth: 'Net Wealth Evaluated',
+    categoryBreakdown: 'Zakat Category Breakdown',
+    zakataOnCash: 'Zakat on Cash',
+    zakataOnGold: 'Zakat on Gold',
+    zakataOnInvestments: 'Zakat on Investments',
     back: 'Back',
     next: 'Next',
     calculateZakat: 'Calculate Zakat',
@@ -102,6 +106,10 @@ const translations = {
     totalGrossAssets: 'کل مجموعی اثاثے',
     totalLiabilities: 'کل ذمہ داریاں',
     netWealth: 'خالص دولت',
+    categoryBreakdown: 'زکوٰۃ زمرہ تفصیل',
+    zakataOnCash: 'نقد پر زکوٰۃ',
+    zakataOnGold: 'سونا پر زکوٰۃ',
+    zakataOnInvestments: 'سرمایہ کاری پر زکوٰۃ',
     back: 'واپس',
     next: 'آگے',
     calculateZakat: 'زکوٰۃ حساب کریں',
@@ -221,6 +229,18 @@ function App() {
 
   // ── Helpers ───────────────────────────────────────────────────────────────
   const isAssetsEmpty = Object.values(assets).every(v => v === '' || Number(v) === 0);
+
+  const getCategoryBreakdown = () => {
+    const cashTotal = Number(assets.cashInBank || 0) + Number(assets.cashInHand || 0);
+    const goldValue = Number(assets.gold || 0) * GOLD_PRICE;
+    const investmentsValue = Number(assets.investments || 0);
+
+    return {
+      cash: cashTotal * 0.025,
+      gold: goldValue * 0.025,
+      investments: investmentsValue * 0.025
+    };
+  };
 
   const getBreakdown = () => {
     const goldValue = Number(assets.gold || 0) * GOLD_PRICE;
@@ -395,6 +415,22 @@ function App() {
             <div className="result-details">
               {result.eligible && Number(result.zakat) > 0 && (
                 <>
+                  <div className="breakdown-title">{t.categoryBreakdown}</div>
+                  <ul className="summary-list" style={{ marginBottom: '24px' }}>
+                    <li className="summary-item" style={{ padding: '12px 0', fontSize: '1rem', fontWeight: 500 }}>
+                      <span>{t.zakataOnCash}</span> <span>{formatINR(getCategoryBreakdown().cash)}</span>
+                    </li>
+                    <li className="summary-item" style={{ padding: '12px 0', fontSize: '1rem', fontWeight: 500 }}>
+                      <span>{t.zakataOnGold}</span> <span>{formatINR(getCategoryBreakdown().gold)}</span>
+                    </li>
+                    <li className="summary-item" style={{ padding: '12px 0', fontSize: '1rem', fontWeight: 500 }}>
+                      <span>{t.zakataOnInvestments}</span> <span>{formatINR(getCategoryBreakdown().investments)}</span>
+                    </li>
+                    <li className="summary-item total" style={{ marginTop: '12px', padding: '14px 0', fontSize: '1.1rem', background: 'var(--primary)', color: '#fff', borderRadius: '8px' }}>
+                      <span>{t.totalZakatDue}</span> <span>{formatINR(result.zakat)}</span>
+                    </li>
+                  </ul>
+
                   <div className="breakdown-title">{t.zakatBreakdown}</div>
                   <ul className="summary-list" style={{ marginBottom: '16px' }}>
                     <li className="summary-item" style={{ padding: '8px 0', fontSize: '0.9rem' }}>

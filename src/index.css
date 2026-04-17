@@ -546,13 +546,21 @@ body {
 
 .breakdown-title {
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 600;
   color: var(--text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin: 20px 0 12px;
-  border-bottom: 1px dashed var(--border-color);
-  padding-bottom: 8px;
+  letter-spacing: 0.5px;
+  margin-bottom: 12px;
+  margin-top: 8px;
+}
+
+.summary-item.total {
+  font-weight: 700;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 14px !important;
+  display: flex;
+  justify-content: space-between;
 }
 
 .smart-message {
