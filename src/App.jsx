@@ -5,6 +5,7 @@ import {
   CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link, Download, Lightbulb
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 import { calculateZakatAPI } from './api';
 import './index.css';
 
@@ -267,99 +268,83 @@ function App() {
     if (!result) return;
     const doc = new jsPDF();
     const today = new Date().toLocaleDateString('en-GB');
-    const leftMargin = 20;
-    const rightMargin = 190;
-    let y = 25;
-    const lineHeight = 10;
-    const sectionGap = 12;
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
-    doc.text('Zakat Calculation Report', 105, y, { align: 'center' });
-    y += 12;
+    doc.text('Zakat Calculation Report', 105, 22, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
-    doc.text(`Date: ${today}`, 105, y, { align: 'center' });
-    y += 10;
+    doc.text(`Date: ${today}`, 105, 30, { align: 'center' });
 
     doc.setDrawColor(180);
     doc.setLineWidth(0.3);
-    doc.line(leftMargin, y, rightMargin, y);
-    y += sectionGap;
+    doc.line(20, 36, 190, 36);
 
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Assets', leftMargin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
+    let startY = 45;
 
-    const assetDetails = [
-      { label: 'Cash in Bank', value: formatPdfCurrency(assets.cashInBank || 0) },
-      { label: 'Cash in Hand', value: formatPdfCurrency(assets.cashInHand || 0) },
-      { label: 'Gold', value: `${assets.gold || 0} grams` },
-      { label: 'Silver', value: `${assets.silver || 0} grams` },
-      { label: 'Investments', value: formatPdfCurrency(assets.investments || 0) },
-    ];
-
-    assetDetails.forEach((item) => {
-      doc.text(item.label, leftMargin, y);
-      doc.text(item.value, rightMargin, y, { align: 'right' });
-      y += lineHeight;
+    doc.autoTable({
+      startY,
+      head: [['Assets', '']],
+      body: [
+        ['Cash in Bank', formatPdfCurrency(assets.cashInBank || 0)],
+        ['Cash in Hand', formatPdfCurrency(assets.cashInHand || 0)],
+        ['Gold', `${assets.gold || 0} grams`],
+        ['Silver', `${assets.silver || 0} grams`],
+        ['Investments', formatPdfCurrency(assets.investments || 0)],
+        ['Total Assets', formatPdfCurrency(result.totalAssets)],
+      ],
+      theme: 'plain',
+      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
+      bodyStyles: { fontSize: 11 },
+      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      margin: { left: 20, right: 20 },
+      didDrawPage: () => {},
     });
 
-    doc.setFont('helvetica', 'bold');
-    doc.text('Total Assets', leftMargin, y);
-    doc.text(formatPdfCurrency(result.totalAssets), rightMargin, y, { align: 'right' });
-    y += sectionGap;
-
-    doc.setDrawColor(180);
-    doc.line(leftMargin, y - 6, rightMargin, y - 6);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Liabilities', leftMargin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-
-    const liabilityDetails = [
-      { label: 'Outstanding Loans', value: formatPdfCurrency(liabilities.loans || 0) },
-      { label: 'Pending Dues', value: formatPdfCurrency(liabilities.pendingDues || 0) },
-    ];
-
-    liabilityDetails.forEach((item) => {
-      doc.text(item.label, leftMargin, y);
-      doc.text(item.value, rightMargin, y, { align: 'right' });
-      y += lineHeight;
+    const liabilitiesY = doc.lastAutoTable.finalY + 12;
+    doc.autoTable({
+      startY: liabilitiesY,
+      head: [['Liabilities', '']],
+      body: [
+        ['Outstanding Loans', formatPdfCurrency(liabilities.loans || 0)],
+        ['Pending Dues', formatPdfCurrency(liabilities.pendingDues || 0)],
+        ['Total Liabilities', formatPdfCurrency(result.totalLiabilities)],
+      ],
+      theme: 'plain',
+      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
+      bodyStyles: { fontSize: 11 },
+      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      margin: { left: 20, right: 20 },
     });
 
-    doc.setFont('helvetica', 'bold');
-    doc.text('Total Liabilities', leftMargin, y);
-    doc.text(formatPdfCurrency(result.totalLiabilities), rightMargin, y, { align: 'right' });
-    y += sectionGap;
+    const netWealthY = doc.lastAutoTable.finalY + 12;
+    doc.autoTable({
+      startY: netWealthY,
+      head: [['Net Wealth', '']],
+      body: [
+        ['', formatPdfCurrency(result.netWealth)],
+      ],
+      theme: 'plain',
+      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
+      bodyStyles: { fontSize: 11 },
+      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      margin: { left: 20, right: 20 },
+    });
 
-    doc.setDrawColor(180);
-    doc.line(leftMargin, y - 6, rightMargin, y - 6);
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(14);
-    doc.text('Net Wealth', leftMargin, y);
-    doc.setFont('helvetica', 'normal');
-    doc.setFontSize(12);
-    doc.text(formatPdfCurrency(result.netWealth), rightMargin, y, { align: 'right' });
-    y += sectionGap;
-
-    doc.setDrawColor(100);
-    doc.setLineWidth(0.5);
-    doc.line(leftMargin, y, rightMargin, y);
-    y += sectionGap;
-
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(16);
-    doc.text('Zakat Amount', leftMargin, y);
-    doc.setFont('helvetica', 'bold');
-    doc.setFontSize(18);
-    doc.text(formatPdfCurrency(result.zakat), rightMargin, y, { align: 'right' });
+    const finalY = doc.lastAutoTable.finalY + 12;
+    doc.autoTable({
+      startY: finalY,
+      head: [['Zakat Amount', '']],
+      body: [
+        ['', formatPdfCurrency(result.zakat)],
+      ],
+      theme: 'plain',
+      headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 14 },
+      bodyStyles: { fontSize: 13, fontStyle: 'bold' },
+      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      margin: { left: 20, right: 20 },
+    });
 
     doc.save('zakat-report.pdf');
   };
