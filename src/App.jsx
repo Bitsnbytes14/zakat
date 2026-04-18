@@ -5,7 +5,7 @@ import {
   CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link, Download, Lightbulb
 } from 'lucide-react';
 import { jsPDF } from 'jspdf';
-import 'jspdf-autotable';
+import autoTable from 'jspdf-autotable';
 import { calculateZakatAPI } from './api';
 import './index.css';
 
@@ -284,7 +284,7 @@ function App() {
     const col1Width = 90;
     const col2Width = 70;
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: 42,
       head: [['ASSETS', 'AMOUNT']],
       body: [
@@ -302,7 +302,7 @@ function App() {
       margin: { left: 20, right: 20 },
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 10,
       head: [['LIABILITIES', 'AMOUNT']],
       body: [
@@ -317,7 +317,7 @@ function App() {
       margin: { left: 20, right: 20 },
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 10,
       head: [['NET WEALTH', 'AMOUNT']],
       body: [
@@ -330,7 +330,7 @@ function App() {
       margin: { left: 20, right: 20 },
     });
 
-    doc.autoTable({
+    autoTable(doc, {
       startY: doc.lastAutoTable.finalY + 10,
       head: [['ZAKAT PAYABLE', 'AMOUNT']],
       body: [
