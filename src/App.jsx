@@ -4,7 +4,7 @@ import {
   CreditCard, Receipt, Calculator, ArrowRight, ArrowLeft,
   CheckCircle2, AlertCircle, RefreshCw, Moon, Sun, Info, Link, Download, Lightbulb
 } from 'lucide-react';
-import { jsPDF } from 'jspdf';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { calculateZakatAPI } from './api';
 import './index.css';
