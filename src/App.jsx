@@ -271,21 +271,22 @@ function App() {
 
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(20);
-    doc.text('Zakat Calculation Report', 105, 22, { align: 'center' });
+    doc.text('Zakat Calculation Report', 105, 20, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
-    doc.text(`Date: ${today}`, 105, 30, { align: 'center' });
+    doc.text(`Date: ${today}`, 105, 28, { align: 'center' });
 
-    doc.setDrawColor(180);
-    doc.setLineWidth(0.3);
-    doc.line(20, 36, 190, 36);
+    doc.setDrawColor(100);
+    doc.setLineWidth(0.5);
+    doc.line(20, 34, 190, 34);
 
-    let startY = 45;
+    const col1Width = 90;
+    const col2Width = 70;
 
     doc.autoTable({
-      startY,
-      head: [['Assets', '']],
+      startY: 42,
+      head: [['ASSETS', 'AMOUNT']],
       body: [
         ['Cash in Bank', formatPdfCurrency(assets.cashInBank || 0)],
         ['Cash in Hand', formatPdfCurrency(assets.cashInHand || 0)],
@@ -294,55 +295,51 @@ function App() {
         ['Investments', formatPdfCurrency(assets.investments || 0)],
         ['Total Assets', formatPdfCurrency(result.totalAssets)],
       ],
-      theme: 'plain',
-      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
-      bodyStyles: { fontSize: 11 },
-      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      theme: 'striped',
+      headStyles: { fillColor: [60, 60, 60], textColor: 255, fontStyle: 'bold', fontSize: 11 },
+      bodyStyles: { fontSize: 10 },
+      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
-      didDrawPage: () => {},
     });
 
-    const liabilitiesY = doc.lastAutoTable.finalY + 12;
     doc.autoTable({
-      startY: liabilitiesY,
-      head: [['Liabilities', '']],
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [['LIABILITIES', 'AMOUNT']],
       body: [
         ['Outstanding Loans', formatPdfCurrency(liabilities.loans || 0)],
         ['Pending Dues', formatPdfCurrency(liabilities.pendingDues || 0)],
         ['Total Liabilities', formatPdfCurrency(result.totalLiabilities)],
       ],
-      theme: 'plain',
-      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
-      bodyStyles: { fontSize: 11 },
-      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      theme: 'striped',
+      headStyles: { fillColor: [60, 60, 60], textColor: 255, fontStyle: 'bold', fontSize: 11 },
+      bodyStyles: { fontSize: 10 },
+      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
-    const netWealthY = doc.lastAutoTable.finalY + 12;
     doc.autoTable({
-      startY: netWealthY,
-      head: [['Net Wealth', '']],
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [['NET WEALTH', 'AMOUNT']],
       body: [
-        ['', formatPdfCurrency(result.netWealth)],
+        ['Net Wealth', formatPdfCurrency(result.netWealth)],
       ],
       theme: 'plain',
-      headStyles: { fillColor: [240, 240, 240], fontStyle: 'bold', fontSize: 12 },
-      bodyStyles: { fontSize: 11 },
-      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 11 },
+      bodyStyles: { fontSize: 11, fontStyle: 'bold' },
+      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
-    const finalY = doc.lastAutoTable.finalY + 12;
     doc.autoTable({
-      startY: finalY,
-      head: [['Zakat Amount', '']],
+      startY: doc.lastAutoTable.finalY + 10,
+      head: [['ZAKAT PAYABLE', 'AMOUNT']],
       body: [
-        ['', formatPdfCurrency(result.zakat)],
+        ['Total Zakat', formatPdfCurrency(result.zakat)],
       ],
       theme: 'plain',
-      headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 14 },
-      bodyStyles: { fontSize: 13, fontStyle: 'bold' },
-      columnStyles: { 0: { cellWidth: 80 }, 1: { cellWidth: 70, halign: 'right' } },
+      headStyles: { fillColor: [34, 139, 34], textColor: 255, fontStyle: 'bold', fontSize: 12 },
+      bodyStyles: { fontSize: 14, fontStyle: 'bold' },
+      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
