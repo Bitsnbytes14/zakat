@@ -259,8 +259,8 @@ function App() {
 
   const formatPdfCurrency = (value) => {
     const num = Number(value);
-    if (isNaN(num)) return 'Rs 0.00';
-    return 'Rs ' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    if (isNaN(num)) return '\u20B9 0.00';
+    return '\u20B9 ' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   };
 
   const generatePDF = () => {
@@ -270,18 +270,18 @@ function App() {
     const leftMargin = 20;
     const rightMargin = 190;
     let y = 25;
-    const lineHeight = 8;
+    const lineHeight = 10;
     const sectionGap = 12;
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(22);
+    doc.setFontSize(20);
     doc.text('Zakat Calculation Report', 105, y, { align: 'center' });
     y += 12;
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
     doc.text(`Date: ${today}`, 105, y, { align: 'center' });
-    y += 8;
+    y += 10;
 
     doc.setDrawColor(180);
     doc.setLineWidth(0.3);
@@ -292,7 +292,7 @@ function App() {
     doc.setFontSize(14);
     doc.text('Assets', leftMargin, y);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(12);
 
     const assetDetails = [
       { label: 'Cash in Bank', value: formatPdfCurrency(assets.cashInBank || 0) },
@@ -303,13 +303,13 @@ function App() {
     ];
 
     assetDetails.forEach((item) => {
-      doc.text(item.label, leftMargin + 5, y);
+      doc.text(item.label, leftMargin, y);
       doc.text(item.value, rightMargin, y, { align: 'right' });
       y += lineHeight;
     });
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Total Assets', leftMargin + 5, y);
+    doc.text('Total Assets', leftMargin, y);
     doc.text(formatPdfCurrency(result.totalAssets), rightMargin, y, { align: 'right' });
     y += sectionGap;
 
@@ -320,7 +320,7 @@ function App() {
     doc.setFontSize(14);
     doc.text('Liabilities', leftMargin, y);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(12);
 
     const liabilityDetails = [
       { label: 'Outstanding Loans', value: formatPdfCurrency(liabilities.loans || 0) },
@@ -328,13 +328,13 @@ function App() {
     ];
 
     liabilityDetails.forEach((item) => {
-      doc.text(item.label, leftMargin + 5, y);
+      doc.text(item.label, leftMargin, y);
       doc.text(item.value, rightMargin, y, { align: 'right' });
       y += lineHeight;
     });
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Total Liabilities', leftMargin + 5, y);
+    doc.text('Total Liabilities', leftMargin, y);
     doc.text(formatPdfCurrency(result.totalLiabilities), rightMargin, y, { align: 'right' });
     y += sectionGap;
 
@@ -345,7 +345,7 @@ function App() {
     doc.setFontSize(14);
     doc.text('Net Wealth', leftMargin, y);
     doc.setFont('helvetica', 'normal');
-    doc.setFontSize(11);
+    doc.setFontSize(12);
     doc.text(formatPdfCurrency(result.netWealth), rightMargin, y, { align: 'right' });
     y += sectionGap;
 
