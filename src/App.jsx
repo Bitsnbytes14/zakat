@@ -257,50 +257,110 @@ function App() {
     };
   };
 
+  const formatPdfCurrency = (value) => {
+    const num = Number(value);
+    if (isNaN(num)) return 'Rs 0.00';
+    return 'Rs ' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
   const generatePDF = () => {
     if (!result) return;
     const doc = new jsPDF();
     const today = new Date().toLocaleDateString('en-GB');
-    
-    doc.setFontSize(20);
-    doc.text('Zakat Calculation Report', 105, 20, { align: 'center' });
-    
-    doc.setFontSize(10);
-    doc.text(`Date: ${today}`, 105, 30, { align: 'center' });
-    
+    const leftMargin = 20;
+    const rightMargin = 190;
+    let y = 25;
+    const lineHeight = 8;
+    const sectionGap = 12;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(22);
+    doc.text('Zakat Calculation Report', 105, y, { align: 'center' });
+    y += 12;
+
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text(`Date: ${today}`, 105, y, { align: 'center' });
+    y += 8;
+
+    doc.setDrawColor(180);
+    doc.setLineWidth(0.3);
+    doc.line(leftMargin, y, rightMargin, y);
+    y += sectionGap;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Assets', leftMargin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+
+    const assetDetails = [
+      { label: 'Cash in Bank', value: formatPdfCurrency(assets.cashInBank || 0) },
+      { label: 'Cash in Hand', value: formatPdfCurrency(assets.cashInHand || 0) },
+      { label: 'Gold', value: `${assets.gold || 0} grams` },
+      { label: 'Silver', value: `${assets.silver || 0} grams` },
+      { label: 'Investments', value: formatPdfCurrency(assets.investments || 0) },
+    ];
+
+    assetDetails.forEach((item) => {
+      doc.text(item.label, leftMargin + 5, y);
+      doc.text(item.value, rightMargin, y, { align: 'right' });
+      y += lineHeight;
+    });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total Assets', leftMargin + 5, y);
+    doc.text(formatPdfCurrency(result.totalAssets), rightMargin, y, { align: 'right' });
+    y += sectionGap;
+
+    doc.setDrawColor(180);
+    doc.line(leftMargin, y - 6, rightMargin, y - 6);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Liabilities', leftMargin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+
+    const liabilityDetails = [
+      { label: 'Outstanding Loans', value: formatPdfCurrency(liabilities.loans || 0) },
+      { label: 'Pending Dues', value: formatPdfCurrency(liabilities.pendingDues || 0) },
+    ];
+
+    liabilityDetails.forEach((item) => {
+      doc.text(item.label, leftMargin + 5, y);
+      doc.text(item.value, rightMargin, y, { align: 'right' });
+      y += lineHeight;
+    });
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Total Liabilities', leftMargin + 5, y);
+    doc.text(formatPdfCurrency(result.totalLiabilities), rightMargin, y, { align: 'right' });
+    y += sectionGap;
+
+    doc.setDrawColor(180);
+    doc.line(leftMargin, y - 6, rightMargin, y - 6);
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(14);
+    doc.text('Net Wealth', leftMargin, y);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(11);
+    doc.text(formatPdfCurrency(result.netWealth), rightMargin, y, { align: 'right' });
+    y += sectionGap;
+
+    doc.setDrawColor(100);
     doc.setLineWidth(0.5);
-    doc.line(20, 35, 190, 35);
-    
-    doc.setFontSize(14);
-    doc.text('Assets', 20, 45);
-    doc.setFontSize(11);
-    doc.text(`Cash in Bank: ${formatINR(assets.cashInBank || 0)}`, 25, 55);
-    doc.text(`Cash in Hand: ${formatINR(assets.cashInHand || 0)}`, 25, 62);
-    doc.text(`Gold: ${assets.gold || 0} grams`, 25, 69);
-    doc.text(`Silver: ${assets.silver || 0} grams`, 25, 76);
-    doc.text(`Investments: ${formatINR(assets.investments || 0)}`, 25, 83);
-    doc.text(`Total Assets: ${formatINR(result.totalAssets)}`, 25, 92);
-    
-    doc.setFontSize(14);
-    doc.text('Liabilities', 20, 105);
-    doc.setFontSize(11);
-    doc.text(`Outstanding Loans: ${formatINR(liabilities.loans || 0)}`, 25, 115);
-    doc.text(`Pending Dues: ${formatINR(liabilities.pendingDues || 0)}`, 25, 122);
-    doc.text(`Total Liabilities: ${formatINR(result.totalLiabilities)}`, 25, 131);
-    
-    doc.setLineWidth(0.5);
-    doc.line(20, 138, 190, 138);
-    
-    doc.setFontSize(14);
-    doc.text('Net Wealth', 20, 148);
-    doc.setFontSize(11);
-    doc.text(`Net Wealth: ${formatINR(result.netWealth)}`, 25, 158);
-    
+    doc.line(leftMargin, y, rightMargin, y);
+    y += sectionGap;
+
+    doc.setFont('helvetica', 'bold');
     doc.setFontSize(16);
-    doc.text('Zakat Amount', 20, 175);
-    doc.setFontSize(14);
-    doc.text(`Total Zakat Due: ${formatINR(result.zakat)}`, 25, 185);
-    
+    doc.text('Zakat Amount', leftMargin, y);
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(18);
+    doc.text(formatPdfCurrency(result.zakat), rightMargin, y, { align: 'right' });
+
     doc.save('zakat-report.pdf');
   };
 
