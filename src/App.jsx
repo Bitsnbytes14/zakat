@@ -270,23 +270,36 @@ function App() {
     const today = new Date().toLocaleDateString('en-GB');
 
     doc.setFont('helvetica', 'bold');
-    doc.setFontSize(20);
+    doc.setFontSize(22);
+    doc.setTextColor(40, 40, 40);
     doc.text('Zakat Calculation Report', 105, 20, { align: 'center' });
 
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(11);
-    doc.text(`Date: ${today}`, 105, 28, { align: 'center' });
+    doc.setTextColor(120, 120, 120);
+    doc.text('Financial Summary', 105, 28, { align: 'center' });
 
-    doc.setDrawColor(100);
+    doc.setFont('helvetica', 'normal');
+    doc.setFontSize(10);
+    doc.setTextColor(100, 100, 100);
+    doc.text(`Date: ${today}`, 105, 35, { align: 'center' });
+
+    doc.setDrawColor(200, 200, 200);
     doc.setLineWidth(0.5);
-    doc.line(20, 34, 190, 34);
+    doc.line(20, 40, 190, 40);
 
-    const col1Width = 90;
-    const col2Width = 70;
+    const col1Width = 95;
+    const col2Width = 65;
+    const sectionTitleY = 48;
+
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(60, 60, 60);
+    doc.text('ASSETS', 20, sectionTitleY);
 
     autoTable(doc, {
-      startY: 42,
-      head: [['ASSETS', 'AMOUNT']],
+      startY: 52,
+      head: [['Particulars', 'Amount']],
       body: [
         ['Cash in Bank', formatPdfCurrency(assets.cashInBank || 0)],
         ['Cash in Hand', formatPdfCurrency(assets.cashInHand || 0)],
@@ -296,52 +309,76 @@ function App() {
         ['Total Assets', formatPdfCurrency(result.totalAssets)],
       ],
       theme: 'striped',
-      headStyles: { fillColor: [60, 60, 60], textColor: 255, fontStyle: 'bold', fontSize: 11 },
-      bodyStyles: { fontSize: 10 },
-      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
+      headStyles: { fillColor: [243, 244, 246], textColor: 60, fontStyle: 'bold', fontSize: 10, cellPadding: 3 },
+      bodyStyles: { fontSize: 10, cellPadding: 2, textColor: 50 },
+      alternateRowStyles: { fillColor: [255, 255, 255] },
+      columnStyles: { 0: { cellWidth: col1Width, halign: 'left' }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(60, 60, 60);
+    doc.text('LIABILITIES', 20, doc.lastAutoTable.finalY + 8);
+
     autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 10,
-      head: [['LIABILITIES', 'AMOUNT']],
+      startY: doc.lastAutoTable.finalY + 12,
+      head: [['Particulars', 'Amount']],
       body: [
         ['Outstanding Loans', formatPdfCurrency(liabilities.loans || 0)],
         ['Pending Dues', formatPdfCurrency(liabilities.pendingDues || 0)],
         ['Total Liabilities', formatPdfCurrency(result.totalLiabilities)],
       ],
       theme: 'striped',
-      headStyles: { fillColor: [60, 60, 60], textColor: 255, fontStyle: 'bold', fontSize: 11 },
-      bodyStyles: { fontSize: 10 },
-      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
+      headStyles: { fillColor: [243, 244, 246], textColor: 60, fontStyle: 'bold', fontSize: 10, cellPadding: 3 },
+      bodyStyles: { fontSize: 10, cellPadding: 2, textColor: 50 },
+      alternateRowStyles: { fillColor: [255, 255, 255] },
+      columnStyles: { 0: { cellWidth: col1Width, halign: 'left' }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(12);
+    doc.setTextColor(60, 60, 60);
+    doc.text('SUMMARY', 20, doc.lastAutoTable.finalY + 8);
+
     autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 10,
-      head: [['NET WEALTH', 'AMOUNT']],
+      startY: doc.lastAutoTable.finalY + 12,
+      head: [['Particulars', 'Amount']],
       body: [
         ['Net Wealth', formatPdfCurrency(result.netWealth)],
       ],
       theme: 'plain',
-      headStyles: { fillColor: [220, 220, 220], fontStyle: 'bold', fontSize: 11 },
-      bodyStyles: { fontSize: 11, fontStyle: 'bold' },
-      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
+      headStyles: { fillColor: [229, 231, 235], textColor: 60, fontStyle: 'bold', fontSize: 10, cellPadding: 3 },
+      bodyStyles: { fontSize: 11, fontStyle: 'bold', cellPadding: 3, textColor: 50 },
+      columnStyles: { 0: { cellWidth: col1Width, halign: 'left' }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
 
+    const finalY = doc.lastAutoTable.finalY + 8;
+    doc.setFont('helvetica', 'bold');
+    doc.setFontSize(13);
+    doc.setTextColor(34, 139, 34);
+    doc.text('ZAKAT PAYABLE', 20, finalY);
+
     autoTable(doc, {
-      startY: doc.lastAutoTable.finalY + 10,
-      head: [['ZAKAT PAYABLE', 'AMOUNT']],
+      startY: finalY + 4,
+      head: [['Particulars', 'Amount']],
       body: [
-        ['Total Zakat', formatPdfCurrency(result.zakat)],
+        ['Total Zakat Due', formatPdfCurrency(result.zakat)],
       ],
       theme: 'plain',
-      headStyles: { fillColor: [34, 139, 34], textColor: 255, fontStyle: 'bold', fontSize: 12 },
-      bodyStyles: { fontSize: 14, fontStyle: 'bold' },
-      columnStyles: { 0: { cellWidth: col1Width }, 1: { cellWidth: col2Width, halign: 'right' } },
+      headStyles: { fillColor: [220, 252, 220], textColor: 34, fontStyle: 'bold', fontSize: 12, cellPadding: 4 },
+      bodyStyles: { fontSize: 14, fontStyle: 'bold', cellPadding: 4, textColor: 34 },
+      columnStyles: { 0: { cellWidth: col1Width, halign: 'left' }, 1: { cellWidth: col2Width, halign: 'right' } },
       margin: { left: 20, right: 20 },
     });
+
+    const pageHeight = doc.internal.pageSize.height;
+    doc.setFont('helvetica', 'italic');
+    doc.setFontSize(9);
+    doc.setTextColor(150, 150, 150);
+    doc.text('Generated by Smart Zakat Calculator', 105, pageHeight - 10, { align: 'center' });
 
     doc.save('zakat-report.pdf');
   };
