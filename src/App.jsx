@@ -192,6 +192,33 @@ function App() {
   const [error, setError] = useState(null);
   const [result, setResult] = useState(null);
 
+  // ── Calculation History ───────────────────────────────────────────────────
+  const [history, setHistory] = useState(() => {
+    try {
+      return JSON.parse(localStorage.getItem('zakatHistory') || '[]');
+    } catch {
+      return [];
+    }
+  });
+
+  const saveToHistory = (calcResult) => {
+    const entry = {
+      date: new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }),
+      zakat: calcResult.zakat,
+      netWealth: calcResult.netWealth,
+    };
+    setHistory(prev => {
+      const updated = [entry, ...prev].slice(0, 5);
+      localStorage.setItem('zakatHistory', JSON.stringify(updated));
+      return updated;
+    });
+  };
+
+  const clearHistory = () => {
+    localStorage.removeItem('zakatHistory');
+    setHistory([]);
+  };
+
   // Apply dark mode theme
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
@@ -235,6 +262,7 @@ function App() {
     try {
       const data = await calculateZakatAPI(assets, liabilities);
       setResult(data);
+      saveToHistory(data);
       setStep(4);
     } catch (err) {
       setError(err.message);
@@ -655,6 +683,33 @@ function App() {
                 </div>
               )}
             </div>
+
+            {/* ── Calculation History ── */}
+            {history.length > 0 && (
+              <div className="history-section">
+                <div className="history-header">
+                  <div className="breakdown-title" style={{ margin: 0 }}>Recent Calculations</div>
+                  <button
+                    className="btn btn-secondary history-clear-btn"
+                    onClick={clearHistory}
+                    aria-label="Clear history"
+                  >
+                    Clear History
+                  </button>
+                </div>
+                <ul className="history-list">
+                  {history.map((entry, idx) => (
+                    <li key={idx} className="history-item">
+                      <span className="history-date">{entry.date}</span>
+                      <div className="history-values">
+                        <span className="history-label">Net Wealth: <strong>{formatINR(entry.netWealth)}</strong></span>
+                        <span className="history-zakat">Zakat: <strong>{formatINR(entry.zakat)}</strong></span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </div>
         )}
 
